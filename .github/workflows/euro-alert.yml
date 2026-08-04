@@ -1,0 +1,35 @@
+name: euro-alert
+
+on:
+  schedule:
+    # 매시 17분에 실행 (정각은 혼잡해서 지연이 심함 → 일부러 비켜둠)
+    - cron: "17 * * * *"
+  workflow_dispatch: # Actions 탭에서 수동 실행 버튼
+
+permissions:
+  contents: write # state.json 커밋용
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 환율 확인
+        env:
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          TARGET_RATE: "1580" # ← 목표 환율. 여기 숫자만 바꾸면 됨
+        run: python check_rate.py
+
+      - name: 상태 저장
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add state.json
+          git diff --staged --quiet || git commit -m "state: $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
