@@ -23,7 +23,7 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
-          TARGET_RATE: "1" # ← 목표 환율. 여기 숫자만 바꾸면 됨
+          TARGET_RATE: "9999" # ← 목표 환율. 여기 숫자만 바꾸면 됨
         run: python check_rate.py
 
       - name: 상태 저장
