@@ -2,12 +2,16 @@ name: euro-alert
 
 on:
   schedule:
-    # 매시 17분에 실행 (정각은 혼잡해서 지연이 심함 → 일부러 비켜둠)
-    - cron: "17 * * * *"
-  workflow_dispatch: # Actions 탭에서 수동 실행 버튼
+    # 10분마다 (정각은 지연이 심해서 7분씩 밀어둠)
+    - cron: "7,17,27,37,47,57 * * * *"
+  workflow_dispatch: # Actions 탭 수동 실행 버튼
 
 permissions:
   contents: write # state.json 커밋용
+
+concurrency:
+  group: euro-alert
+  cancel-in-progress: false
 
 jobs:
   check:
@@ -23,7 +27,8 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
-          TARGET_RATE: "1635" # ← 목표 환율. 여기 숫자만 바꾸면 됨
+          TARGET_RATE: "1640" # ← 기준 환율. 여기 숫자만 바꾸면 됨
+          STEP_WON: "1" # ← 추가 알림 간격(원)
         run: python check_rate.py
 
       - name: 상태 저장
@@ -31,5 +36,8 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add state.json
-          git diff --staged --quiet || git commit -m "state: $(date -u +%Y-%m-%dT%H:%MZ)"
-          git push
+          if ! git diff --staged --quiet; then
+            git commit -m "state: $(date -u +%Y-%m-%dT%H:%MZ)"
+            git pull --rebase --autostash
+            git push
+          fi
