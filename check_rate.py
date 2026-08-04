@@ -97,7 +97,7 @@ def main():
         print(f"[알림 전송] {rate}")
     elif was_below and not is_below:
         send_telegram(
-            f"↩️ 유로가 다시 올라갔어욤.\n\n"
+            f"🥺 유로가 다시 올라갔어욤.\n\n"
             f"현재  {rate:,.2f}원\n"
             f"{source} · {now} KST"
         )
