@@ -1,7 +1,5 @@
 {
   "below": false,
-  "last_rate": 1643.33,
-  "target": 1635.0,
-  "source": "NAVER(종가)",
-  "checked_at": "08/04 20:56"
+  "last_alert_price": null,
+  "last_digest": ""
 }
