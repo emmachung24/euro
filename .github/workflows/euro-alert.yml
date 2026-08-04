@@ -27,7 +27,7 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
-          TARGET_RATE: "9999" # ← 기준 환율. 여기 숫자만 바꾸면 됨
+          TARGET_RATE: "1640" # ← 기준 환율. 여기 숫자만 바꾸면 됨
           STEP_WON: "1" # ← 추가 알림 간격(원)
         run: python check_rate.py
 
