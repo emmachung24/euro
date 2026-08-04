@@ -24,6 +24,8 @@ DIGEST_AFTER_MINUTE = 7                                # 정각 혼잡 회피
 STATE_FILE = "state.json"
 KST = timezone(timedelta(hours=9))
 
+NAVER_BASE = "https://api.stock.naver.com/marketindex/exchange"
+
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 
@@ -35,35 +37,59 @@ def get_json(url):
         return json.loads(res.read().decode("utf-8"))
 
 
-def fetch_rate():
-    """환율 소스를 순서대로 시도. 앞의 게 실패하면 다음으로 넘어간다."""
-    sources = [
-        (
-            "NAVER(실시간)",
-            "https://api.stock.naver.com/marketindex/exchange/FX_EURKRW",
-            lambda d: float(str(d["closePrice"]).replace(",", "")),
-        ),
-        (
-            "NAVER(종가)",
-            "https://api.stock.naver.com/marketindex/exchange/FX_EURKRW"
-            "/prices?page=1&pageSize=1",
-            lambda d: float(str(d[0]["closePrice"]).replace(",", "")),
-        ),
-        (
-            "er-api(일1회)",
-            "https://open.er-api.com/v6/latest/EUR",
-            lambda d: float(d["rates"]["KRW"]),
-        ),
-    ]
+def parse_naver(data):
+    """NAVER 고시환율 응답에서 (환율, 고시시각) 추출."""
+    info = data.get("exchangeInfo", data)
+    raw = info.get("calcPrice") or info.get("closePrice")
+    rate = float(str(raw).replace(",", ""))
 
-    errors = []
-    for name, url, parse in sources:
+    quoted = None
+    stamp = info.get("localTradedAt")
+    if stamp:
         try:
-            rate = parse(get_json(url))
+            quoted = datetime.fromisoformat(stamp).astimezone(KST)
+        except Exception:
+            quoted = None
+
+    return rate, quoted
+
+
+def fetch_rate():
+    """(환율, 소스명, 고시시각) 반환. 앞의 소스가 실패하면 다음으로 넘어간다."""
+    errors = []
+
+    # 1~2순위: 은행별 고시환율 (수시 갱신)
+    for name, code in (
+        ("NAVER(신한)", "FX_EURKRW_SHB"),
+        ("NAVER(하나)", "FX_EURKRW"),
+    ):
+        try:
+            rate, quoted = parse_naver(get_json(f"{NAVER_BASE}/{code}"))
             if rate > 0:
-                return rate, name
+                return rate, name, quoted
         except Exception as exc:
-            errors.append(f"  - {name}: {exc}")
+            errors.append(f"  - {name}: {exc!r}")
+            print(f"[소스 실패] {name}: {exc!r}")
+
+    # 3순위: 일별 종가
+    try:
+        data = get_json(f"{NAVER_BASE}/FX_EURKRW/prices?page=1&pageSize=1")
+        rate = float(str(data[0]["closePrice"]).replace(",", ""))
+        if rate > 0:
+            return rate, "NAVER(종가)", None
+    except Exception as exc:
+        errors.append(f"  - NAVER(종가): {exc!r}")
+        print(f"[소스 실패] NAVER(종가): {exc!r}")
+
+    # 4순위: 해외 API (하루 1회 갱신)
+    try:
+        data = get_json("https://open.er-api.com/v6/latest/EUR")
+        rate = float(data["rates"]["KRW"])
+        if rate > 0:
+            return rate, "er-api(일1회)", None
+    except Exception as exc:
+        errors.append(f"  - er-api(일1회): {exc!r}")
+        print(f"[소스 실패] er-api(일1회): {exc!r}")
 
     raise RuntimeError("모든 환율 소스 실패:\n" + "\n".join(errors))
 
@@ -93,9 +119,9 @@ def save_state(state):
 
 # ---------- 메인 ----------
 def main():
-    rate, source = fetch_rate()
+    rate, source, quoted = fetch_rate()
     now = datetime.now(KST)
-    tail = f"{source} · {now.strftime('%m/%d %H:%M')} KST"
+    tail = f"{source} · {(quoted or now):%m/%d %H:%M} KST"
 
     state = load_state()
     was_below = bool(state.get("below", False))
@@ -142,7 +168,7 @@ def main():
         print(f"[복귀 알림] {rate}")
 
     else:
-        print(f"[조용히 통과] {rate} (기준 {TARGET})")
+        print(f"[조용히 통과] {rate} (기준 {TARGET}, 소스 {source})")
 
     # 4) 정기 리포트
     slot = f"{now:%Y-%m-%d}-{now.hour:02d}"
