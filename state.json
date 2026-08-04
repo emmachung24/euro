@@ -1,7 +1,7 @@
 {
-  "below": true,
-  "last_rate": 1644.69,
-  "target": 9999.0,
+  "below": false,
+  "last_rate": 1643.99,
+  "target": 1.0,
   "source": "NAVER(종가)",
-  "checked_at": "08/04 20:47"
+  "checked_at": "08/04 20:49"
 }
