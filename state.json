@@ -1,5 +1,5 @@
 {
-  "below": false,
-  "last_alert_price": null,
+  "below": true,
+  "last_alert_price": 1644.02,
   "last_digest": "2026-08-04-21"
 }
