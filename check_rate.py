@@ -31,12 +31,12 @@ def fetch_rate():
     """환율 소스를 순서대로 시도. 앞의 게 실패하면 다음 걸로 넘어간다."""
     sources = [
         (
-            "네이버(수시)",
+            "NAVER(수시)",
             "https://api.stock.naver.com/marketindex/exchange/FX_EURKRW",
             lambda d: float(str(d["closePrice"]).replace(",", "")),
         ),
         (
-            "네이버(종가)",
+            "NAVER(종가)",
             "https://api.stock.naver.com/marketindex/exchange/FX_EURKRW/prices?page=1&pageSize=1",
             lambda d: float(str(d[0]["closePrice"]).replace(",", "")),
         ),
@@ -89,7 +89,7 @@ def main():
     # 목표가 아래로 "처음 내려왔을 때"만 알림 → 중복 알림 방지
     if is_below and not was_below:
         send_telegram(
-            f"🔔 유로 하락!\n\n"
+            f"하원아 환전하렴? 🐣\n\n"
             f"현재  {rate:,.2f}원\n"
             f"목표  {TARGET:,.0f}원\n\n"
             f"{source} · {now} KST"
