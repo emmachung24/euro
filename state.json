@@ -1,5 +1,9 @@
 {
+  "target": 1640,
+  "step": 1,
+  "enabled": true,
   "below": false,
   "last_alert_price": null,
-  "last_digest": "2026-08-04-21"
+  "last_digest": "",
+  "last_update_id": 0
 }
