@@ -131,8 +131,8 @@ def fetch_rate():
         if rate > 0:
             return rate, "naver_close", None
     except Exception as exc:
-        errors.append(f"NAVER 종가: {exc!r}")
-        print(f"[소스 실패] NAVER 종가: {exc!r}")
+        errors.append(f"NAVER (종가): {exc!r}")
+        print(f"[소스 실패] NAVER (종가): {exc!r}")
 
     try:
         data = get_json("https://open.er-api.com/v6/latest/EUR")
@@ -172,7 +172,7 @@ def send_digest(state, now, rate, tail):
     header = f"🐥{day:%Y/%m/%d} {hour:02d}:00"
     if len(slots) > 1:
         missed = ", ".join(f"{h:02d}:00" for _, _, h in slots[:-1])
-        header += f"\n(밀린 슬롯: {missed})"
+        header += f"\n(밀린 slot: {missed})"
 
     send_telegram(f"{header}\n\n현재  {rate:,.2f}원\n{tail}")
     state["last_digest"] = latest_id
@@ -267,7 +267,7 @@ def handle_commands(texts, state, rate, tail):
                 continue
             state["target"] = value
             target_changed = True
-            send_telegram(f"✅ 기준가를 {value:,.2f}원으로 바꿨어요.")
+            send_telegram(f"✅ 기준가 {value:,.2f}원으로 변경 완료!")
             print(f"[명령] target -> {value}")
 
         elif cmd == "/status":
@@ -278,10 +278,10 @@ def handle_commands(texts, state, rate, tail):
                 if state.get("low_at"):
                     low_line += f" ({state['low_at']})"
             send_telegram(
-                f"📊 현재 설정\n\n"
+                f"✨ 현재 설정\n\n"
                 f"기준가  {state['target']:,.2f}원\n"
                 f"간격    {state['step']:,.2f}원\n"
-                f"알림    {'켜짐' if state.get('enabled', True) else '꺼짐'}\n\n"
+                f"알림    {'on' if state.get('enabled', True) else 'off'}\n\n"
                 f"현재    {rate:,.2f}원\n"
                 f"최저    {low_line}\n\n"
                 f"{tail}"
@@ -290,12 +290,12 @@ def handle_commands(texts, state, rate, tail):
 
         elif cmd == "/off":
             state["enabled"] = False
-            send_telegram("🔕 알림을 껐어요. /on 으로 다시 켤 수 있어요.")
+            send_telegram("🔕 알림이 자는 중! /on 으로 깨워주세요. 😴")
             print("[명령] off")
 
         elif cmd == "/on":
             state["enabled"] = True
-            send_telegram("🔔 알림을 켰어요.")
+            send_telegram("🔔 알림이 기상!")
             print("[명령] on")
 
         elif cmd.startswith("/"):
@@ -324,7 +324,7 @@ def main():
     label, live = SOURCES[source_key]
     tail = f"{label} · {(quoted or now):%m/%d %H:%M} KST"
     if not live:
-        tail += "\n⚠️ 실시간 시세가 아니에요"
+        tail += "\n⚠️ 실시간 시세가 아니에요 ㅠㅡㅠ"
 
     # --- 명령어 먼저 처리 ---
     texts, newest_id = fetch_commands(int(state.get("last_update_id", 0)))
@@ -421,7 +421,7 @@ def main():
         # 5) 급락 감지
         if peak is not None and peak - rate >= PLUNGE_WON:
             send_telegram(
-                f"😃 유로 급락 중!\n\n"
+                f"letz goooooo 😎\n\n"
                 f"현재  {rate:,.2f}원\n"
                 f"{PLUNGE_MINUTES}분 내  -{peak - rate:,.2f}원\n\n"
                 f"{tail}"
@@ -435,7 +435,7 @@ def main():
             notified = state.get("low_notified")
             if notified is None or rate <= notified - step:
                 send_telegram(
-                    f"😚 최저 경신\n\n"
+                    f"😃 하원아 지금이야! dé gaza.\n\n"
                     f"현재  {rate:,.2f}원\n"
                     f"기준  {target:,.2f}원\n\n"
                     f"{tail}"
