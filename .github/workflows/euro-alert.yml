@@ -2,9 +2,10 @@ name: euro-alert
 
 on:
   schedule:
-    # 10분마다 (정각은 지연이 심해서 7분씩 밀어둠)
-    - cron: "7,17,27,37,47,57 * * * *"
-  workflow_dispatch: # Actions 탭 수동 실행 버튼
+    # 백업용. 실제 10분 주기는 cron-job.org 가 workflow_dispatch 로 담당한다.
+    # 외부 크론이 죽어도 최소 1시간에 한 번은 돌게 하는 안전망.
+    - cron: "23 * * * *"
+  workflow_dispatch: # 외부 크론 + Actions 탭 수동 실행
 
 permissions:
   contents: write # state.json 커밋용
@@ -43,6 +44,9 @@ jobs:
           git add state.json
           if ! git diff --staged --quiet; then
             git commit -m "state: $(date -u +%Y-%m-%dT%H:%MZ)"
-            git pull --rebase --autostash
-            git push
+            for i in 1 2 3; do
+              git pull --rebase --autostash && git push && break
+              echo "push 재시도 $i"
+              sleep 5
+            done
           fi
