@@ -53,9 +53,9 @@ CHAT_ID = str(os.environ["CHAT_ID"]).strip()
 # 내부 key -> (표시 이름, 실시간 여부)
 # 표시 이름은 마음대로 바꿔도 되지만, key는 절대 바꾸지 말 것
 SOURCES = {
-    "naver_shb":   ("NAVER 신한 고시", True),
-    "naver_hana":  ("NAVER 하나 고시", True),
-    "naver_close": ("NAVER 종가",      False),
+    "naver_shb":   ("NAVER (신한)", True),
+    "naver_hana":  ("NAVER (하나)", True),
+    "naver_close": ("NAVER (종가)",      False),
     "er_api":      ("er-api",          False),
 }
 
@@ -421,7 +421,7 @@ def main():
         # 5) 급락 감지
         if peak is not None and peak - rate >= PLUNGE_WON:
             send_telegram(
-                f"⚡ 유로 급락 중!\n\n"
+                f"😃 유로 급락 중!\n\n"
                 f"현재  {rate:,.2f}원\n"
                 f"{PLUNGE_MINUTES}분 내  -{peak - rate:,.2f}원\n\n"
                 f"{tail}"
@@ -435,7 +435,7 @@ def main():
             notified = state.get("low_notified")
             if notified is None or rate <= notified - step:
                 send_telegram(
-                    f"🔻 최저 경신\n\n"
+                    f"😚 최저 경신\n\n"
                     f"현재  {rate:,.2f}원\n"
                     f"기준  {target:,.2f}원\n\n"
                     f"{tail}"
