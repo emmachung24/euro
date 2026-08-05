@@ -367,7 +367,7 @@ def main():
         slot = f"{slot_date:%Y-%m-%d}-{slot_hour:02d}"
         if state.get("last_digest", "") != slot:
             send_telegram(
-                f"🐥{slot_date:%Y/%m/%d} {slot_hour:02d}:00\n\n"
+                f"🐥 {slot_date:%Y/%m/%d} {slot_hour:02d}:00\n\n"
                 f"현재  {rate:,.2f}원\n"
                 f"{tail}"
             )
