@@ -4,6 +4,16 @@
   "enabled": true,
   "below": false,
   "last_alert_price": null,
-  "last_digest": "",
-  "last_update_id": 0
+  "last_digest": "2026-08-05-12",
+  "last_update_id": 0,
+  "last_source": "NAVER(신한 고시)",
+  "recent": [
+    [
+      1785902679.515863,
+      1641.62
+    ]
+  ],
+  "low_notified": 1641.62,
+  "low": 1641.62,
+  "low_at": "08/05 13:03"
 }
