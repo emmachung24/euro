@@ -290,12 +290,12 @@ def handle_commands(texts, state, rate, tail):
 
         elif cmd == "/off":
             state["enabled"] = False
-            send_telegram("🔕 알림이 자는 중! /on 으로 깨워주세요. 😴")
+            send_telegram("🔕 물꼬깅 자는 중! /on 으로 깨워주세요. 😴")
             print("[명령] off")
 
         elif cmd == "/on":
             state["enabled"] = True
-            send_telegram("🔔 알림이 기상!")
+            send_telegram("🔔 물꼬깅 기상!")
             print("[명령] on")
 
         elif cmd.startswith("/"):
