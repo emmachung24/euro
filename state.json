@@ -2,18 +2,22 @@
   "target": 1641.0,
   "step": 1,
   "enabled": true,
-  "below": false,
-  "last_alert_price": null,
+  "below": true,
+  "last_alert_price": 1639.7,
   "last_digest": "2026-08-06-09",
   "last_update_id": 87180163,
   "recent": [
     [
       1785976814.187938,
       1641.67
+    ],
+    [
+      1785977421.304927,
+      1639.7
     ]
   ],
   "low_notified": 1641.62,
-  "low": 1640.81,
-  "low_at": "08/05 13:08",
+  "low": 1639.7,
+  "low_at": "08/06 09:49",
   "last_source_key": "naver_shb"
 }
