@@ -2,15 +2,11 @@
   "target": 1635.0,
   "step": 1,
   "enabled": true,
-  "below": false,
-  "last_alert_price": null,
+  "below": true,
+  "last_alert_price": 1634.58,
   "last_digest": "2026-08-18-21",
   "last_update_id": 87180164,
   "recent": [
-    [
-      1787059218.230276,
-      1632.91
-    ],
     [
       1787059514.489634,
       1633.6
@@ -34,6 +30,10 @@
     [
       1787061017.887162,
       1635.12
+    ],
+    [
+      1787061314.157445,
+      1634.58
     ]
   ],
   "low_notified": 1641.62,
