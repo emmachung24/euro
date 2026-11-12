@@ -4,7 +4,7 @@
   "enabled": true,
   "below": true,
   "last_alert_price": 1472.26,
-  "last_digest": "2026-11-12-12",
+  "last_digest": "2026-11-12-15",
   "last_update_id": 87180168,
   "recent": [
     [
@@ -30,6 +30,10 @@
     [
       1794463519.267795,
       1472.55
+    ],
+    [
+      1794463814.534965,
+      1472.06
     ]
   ],
   "low_notified": 1482.51,
