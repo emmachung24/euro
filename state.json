@@ -3,17 +3,13 @@
   "step": 1,
   "enabled": true,
   "below": true,
-  "last_alert_price": 1471.8,
+  "last_alert_price": 1465.73,
   "last_digest": "2026-11-23-21",
   "last_update_id": 87180168,
   "recent": [
     [
-      1795442434.317767,
-      1471.8
-    ],
-    [
-      1795442718.650554,
-      1470.95
+      1795443020.914053,
+      1465.73
     ]
   ],
   "low_notified": 1482.51,
